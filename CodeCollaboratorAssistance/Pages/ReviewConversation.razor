@@ -1,0 +1,79 @@
+﻿@page "/ReviewConversation"
+@page "/ReviewConversation/{Id:int}"
+@using CollabAPI
+@using CodeCollaboratorAssistance.Data
+@using Blazored.SessionStorage
+@using System.ComponentModel.DataAnnotations
+@using MatBlazor
+@inject ServerService serverService
+@inject ISessionStorageService sessionService
+@inject NavigationManager navigationManager
+@inject BrowserService BrowserService
+
+<style>
+    .text {
+        font-size: 0.70rem;
+    }
+</style>
+
+
+<MatAccordion>
+    <MatExpansionPanel Expanded="true">
+        <MatExpansionPanelSummary style="background-color:cornflowerblue; color: white; height: 32px; margin-left: -16px">
+            <MatExpansionPanelHeader>
+                @if (true)
+                {
+                    var locator = Conversation.locators.First().locator;
+                    if (locator.type == "LINE")
+                    {
+                        <span class="text">Line @locator.lineNumber</span>
+                    }
+                    else if (locator.type == "COORDINATE")
+                    {
+                        <span class="text">Page @locator.page [@locator.x, @locator.y]</span>
+                    }
+                }
+            </MatExpansionPanelHeader>
+        </MatExpansionPanelSummary>
+        <MatExpansionPanelDetails style="margin-left: -16px">
+            @foreach (var conversationComment in Conversation?.comments ?? new List<Review.CommentSummary>())
+            {
+                <p class="font-weight-bold text">@conversationComment.creator.fullName <span>on @conversationComment.creationDate</span></p>
+                <p class="text" style="background-color: beige">
+                    @if (conversationComment.type == "DEFECT_NEW")
+                    {
+                        <span class="oi oi-bug" style="color:crimson">
+                            @conversationComment.text
+                        </span>
+                    }
+                    else if (conversationComment.type == "DEFECT_MARK_FIXED")
+                    {
+                        <span class="oi oi-bug" style="color: green;"></span>
+                        <span class="oi oi-circle-check" style="color: green; margin-left: -8px;">
+                            @conversationComment.text
+                        </span>
+                    }
+                    else if (conversationComment.type == "FILE_UPLOAD")
+                    {
+                        <span class="oi oi-document" style="color:green">
+                            @conversationComment.text
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            @conversationComment.text
+                        </span>
+                    }
+                </p>
+            }
+        </MatExpansionPanelDetails>
+    </MatExpansionPanel>
+</MatAccordion>
+
+@code {
+
+
+    [Parameter]
+    public Review.Conversation Conversation { get; set; }
+}

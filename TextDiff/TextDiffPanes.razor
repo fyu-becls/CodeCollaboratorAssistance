@@ -1,0 +1,94 @@
+﻿@using DiffPlex.DiffBuilder.Model;
+@inject IJSRuntime JSRuntime
+
+<div>
+    <table class="diff display" id="diff" style="width:100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@foreach (var diffLine in diff.OldText.Lines)*@
+            @for (int line = 0; line < Model.OldText.Lines.Count; line++)
+            {
+                var diffLine = Model.OldText.Lines[line];
+                var newDiffLine = Model.NewText.Lines[line];
+                <tr>
+                    <td class="diff-pane-left-line-number @diffLine.Type.ToString().ToLower()" style="width: 1%;
+                                                  min-width: 50px;
+                                                  padding-right: 10px;
+                                                  padding-left: 10px;
+                                                  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+                                                  font-size: 12px;
+                                                  line-height: 20px;
+                                                  color: rgba(27, 31, 35, 0.3);
+                                                  text-align: right;
+                                                  white-space: nowrap;
+                                                  vertical-align: top;
+                                                  cursor: pointer;
+                                                  -webkit-user-select: none;
+                                                  -moz-user-select: none;
+                                                  -ms-user-select: none;
+                                                  user-select: none;">
+                        @((MarkupString) (diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;"))
+                    </td>
+                    <td class="diff-pane-left-line @diffLine.Type.ToString().ToLower()-line" style="padding-right: 10px;
+                                                  padding-left: 10px;
+                                                  line-height: 20px;
+                                                  vertical-align: top;
+                                                  font-size: 14px;">
+                        <span class="line-text">
+                            <TextDiffLine Model="diffLine"></TextDiffLine>
+                        </span>
+                    </td>
+
+
+                    <td class="diff-pane-right-line-number @newDiffLine.Type.ToString().ToLower()" style="width: 1%;
+                                            min-width: 50px;
+                                            padding-right: 10px;
+                                            padding-left: 10px;
+                                            font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+                                            font-size: 12px;
+                                            line-height: 20px;
+                                            color: rgba(27, 31, 35, 0.3);
+                                            text-align: right;
+                                            white-space: nowrap;
+                                            vertical-align: top;
+                                            cursor: pointer;
+                                            -webkit-user-select: none;
+                                            -moz-user-select: none;
+                                            -ms-user-select: none;
+                                            user-select: none;">
+                        @((MarkupString) (newDiffLine.Position.HasValue ? newDiffLine.Position.ToString() : "&nbsp;"))
+                    </td>
+                    <td class="diff-pane-right-line @newDiffLine.Type.ToString().ToLower()-line" style="padding-right: 10px;
+                                                   padding-left: 10px;
+                                                   line-height: 20px;
+                                                   vertical-align: top;
+                                                   font-size: 14px;">
+                        <span class="line-text">
+                            <TextDiffLine Model="newDiffLine"></TextDiffLine>
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+
+    [Parameter] public SideBySideDiffModel Model { get; set; }
+    protected override async Task OnAfterRenderAsync(bool isFirst)
+    {
+        if (isFirst)
+        {
+            await JSRuntime.InvokeAsync<object>("TestDataTablesAdd", "#diff");
+        }
+    }
+}

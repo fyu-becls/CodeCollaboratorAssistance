@@ -1,0 +1,54 @@
+﻿@using MatBlazor
+@*<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href=""><img src="images/logo-white.png" alt="Image" style="height: 48px;width: auto"/></a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>*@
+
+@*<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ReviewDetail">
+                <span class="oi oi-spreadsheet" aria-hidden="true"></span> Review
+            </NavLink>
+        </li>
+    </ul>
+</div>*@
+
+<div>
+    <MatAppBar Fixed="true" Style="background-color:cornflowerblue">
+        <MatAppBarRow>
+            <MatAppBarSection>
+                <MatAppBarTitle>Code Collaborator @((MarkupString)("<br/>"))<span style="float: left">Assistant</span></MatAppBarTitle>
+                <MatAnchorLink class="text-white font-weight-bold" href="" style="margin-right: 24px;margin-left: 24px"> Home
+                </MatAnchorLink>
+                <MatAnchorLink class="text-white font-weight-bold" href="ReviewDetail" style="margin-right: 24px;">
+                    Review
+                </MatAnchorLink>
+                <MatAnchorLink class="text-white font-weight-bold" href="Feedback">
+                    Feedback
+                </MatAnchorLink>
+            </MatAppBarSection>
+            <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                <MatAnchorLink class="text-white font-weight-bold" href="http://svcndalcodeco:8080/ui" target="_blank">Code Collaborator</MatAnchorLink>
+            </MatAppBarSection>
+        </MatAppBarRow>
+    </MatAppBar>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

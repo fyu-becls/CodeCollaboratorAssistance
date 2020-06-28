@@ -1,0 +1,34 @@
+﻿@page "/"
+@using CodeCollaboratorAssistance.Data
+@inject NavigationManager navigationManager
+@inject AuthenticationService authenticationService
+
+
+<div>
+    @if (!isAuthenticated)
+    {
+        <Login />
+    }
+    else
+    {
+        <ReviewSummary />
+    }
+
+</div>
+
+
+@code {
+
+    private bool isAuthenticated;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isAuthenticated = await authenticationService.IsAuthenticated();
+
+            StateHasChanged();
+        }
+    }
+}

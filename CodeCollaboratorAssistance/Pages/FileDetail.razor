@@ -1,0 +1,133 @@
+﻿@page "/FileDetail"
+@page "/FileDetail/{Id:int}/{RevisionId:int}"
+@using CollabAPI
+@using CodeCollaboratorAssistance.Data
+@using Blazored.SessionStorage
+@using System.ComponentModel.DataAnnotations
+@inject ServerService serverService
+@inject ISessionStorageService sessionService
+
+
+<style>
+    /*.spinner {
+        border: 16px solid silver;
+        border-top: 16px solid #337AB7;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        animation: spin 700ms linear infinite;
+        top: 40%;
+        left: 55%;
+        position: absolute;
+    }*/
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg)
+        }
+
+        100% {
+            transform: rotate(360deg)
+        }
+    }
+
+    /*.fa-left {
+        margin-right: 7px;
+    }
+
+    .btn.search {
+        width: 10rem;
+    }*/
+    td, th {
+        vertical-align:top;
+    }
+</style>
+
+@if (isLoading)
+{
+<div class="spinner"></div>
+}
+
+<span>
+    @if (true)
+    {
+        var backUri = "/ReviewDetail/" + Id;
+        var reviewTitle = "Review #" + Id;
+    <NavLink href="@backUri">@reviewTitle</NavLink>
+    }
+</span>
+
+<h5>@path</h5>
+
+<table>
+    <tr>
+        <td>
+            <ReviewConversations ReviewFile="reviewFile"/>
+        </td>
+        <td>
+            <TextDiff OldText="@left" NewText="@right" CollapseContent="@collapsible" ShowWhiteSpace="true">
+                <Header>
+                    <h6 style="padding: 12px; margin: 0px;">
+                        <button>Download Left</button>
+                        <button>Download Right</button>
+                        <span class="badge badge-primary">@($"{context.LineModificationCount} Line Modifications")</span>
+                        <span class="badge badge-danger">@($"{context.LineDeletionCount} Line Deletions")</span>
+                        <span class="badge badge-success">@($"{context.LineAdditionCount} Line Additions")</span>
+
+                        <span class="badge badge-primary">@($"{context.WordModificationCount} Word Modifications")</span>
+                        <span class="badge badge-danger">@($"{context.WordDeletionCount} Word Deletions")</span>
+                        <span class="badge badge-success">@($"{context.WordAdditionCount} Word Additions")</span>
+                    </h6>
+                </Header>
+            </TextDiff>
+        </td>
+    </tr>
+</table>
+
+@code {
+
+
+    string left = string.Empty;
+    string right = string.Empty;
+    bool collapsible = true;
+    string path = string.Empty;
+
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public int RevisionId { get; set; }
+    private bool isLoading;
+
+    protected override Task OnInitializedAsync()
+    {
+        isLoading = true;
+        return base.OnInitializedAsync();
+    }
+
+    private Server server;
+    private Review.ReviewFile reviewFile;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isLoading = true;
+            server = (await serverService.GetCollaboratorServer());
+
+            reviewFile = server.ReviewService.GetReviewFile(Id, RevisionId);
+            var file = server.ReviewService.GetReviewFile(Id, reviewFile.versions.First().id);
+            path = file.versions[0].path + " - " + file.changeType;
+            var versions = file.versions.OrderBy(v => v.date).ToList();
+            if (file.changeType.ToLower() != "added" && file.changeType.ToLower() != "uploaded")
+            {
+                left = server.DownloadManager.GetContent(Id, versions[0]);
+            }
+
+            right = server.DownloadManager.GetContent(Id, versions.Last());
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}

@@ -1,0 +1,321 @@
+﻿@page "/ReviewDetail"
+@page "/ReviewDetail/{Id:int}"
+@using CollabAPI
+@using CodeCollaboratorAssistance.Data
+@using Blazored.SessionStorage
+@using System.ComponentModel.DataAnnotations
+@inject ServerService serverService
+@inject ISessionStorageService sessionService
+@inject NavigationManager navigationManager
+@inject BrowserService BrowserService
+
+<h3>Review Detail</h3>
+
+<style>
+    /*.spinner {
+        border: 16px solid silver;
+        border-top: 16px solid #337AB7;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        animation: spin 700ms linear infinite;
+        top: 40%;
+        left: 55%;
+        position: absolute;
+    }*/
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg)
+        }
+
+        100% {
+            transform: rotate(360deg)
+        }
+    }
+
+    /*.fa-left {
+        margin-right: 7px;
+    }
+
+    .btn.search {
+        width: 10rem;
+    }*/
+
+
+    td, th, tr {
+        font-size: 0.80rem;
+    }
+</style>
+
+@if (isLoaded && (server == null || !server.Connected))
+{
+    <span class="text-nowrap">
+        Please
+        <a class="font-weight-bold" href="">login</a>
+    </span>
+}
+else
+{
+
+    <EditForm Model="@reviewModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+        <DataAnnotationsValidator />
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div style="margin:12px 12px 0px 0px">
+            <label>Review ID:</label>
+            <InputNumber id="name" placeholder="Review ID" @bind-Value="reviewModel.Id" />
+            <ValidationMessage For="@(() => reviewModel.Id)" />
+
+            @if (isLoading)
+            {
+                <button class="btn btn-primary search disabled" disabled>Searching...</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary btn-outline-primary search">Search</button>
+            }
+        </div>
+
+    </EditForm>
+
+    <div style=@($"max-height: {MaxHeight}px;height: {MaxHeight}px;overflow-y: scroll; overflow-x: auto")>
+        @if (summary != null)
+        {
+            <h3 style="margin: 12px 6px 0px 0px">Basic Information</h3>
+            <table class="table">
+                <thead>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td style="font-weight: bold">Review ID:</td>
+                        <td>@summary.reviewId</td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold">Review Title:</td>
+                        <td>@summary.generalInfo.title</td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold">Review Stage:</td>
+                        <td>@summary.reviewMovingOn.phase</td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold">Review Template:</td>
+                        <td>@summary.generalInfo.reviewTemplate</td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold">Createion Date:</td>
+                        <td>@summary.generalInfo.creationDate</td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold">Completion Date:</td>
+                        <td>@summary.generalInfo.completionDate</td>
+                    </tr>
+
+                    @foreach (var fieldValue in summary.generalInfo.customFieldValue)
+                    {
+                        <tr>
+                            <td style="font-weight: bold">@fieldValue.customFieldTitle:</td>
+                            <td style="white-space: pre-line">@fieldValue.customFieldValue.FirstOrDefault()</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+
+            <h3>Participants</h3>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var participant in summary.reviewParticipants.OrderBy(p => p.role.id))
+                    {
+                        <tr>
+                            <td>@participant.displayName</td>
+                            <td>@participant.role.name</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+
+            <h3>Review Matrials</h3>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Files</th>
+                        <th><span class="oi oi-plus" aria-hidden="true" /></th>
+                        <th><span class="oi oi-underline" aria-hidden="true" /></th>
+                        <th><span class="oi oi-delete" aria-hidden="true" /></th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (summary != null && summary.scmMaterials != null)
+                    {
+                        foreach (var scmMaterial in summary.scmMaterials)
+                        {
+                            <MatBlazor.MatH6><span>@scmMaterial.displayName</span></MatBlazor.MatH6>
+                            foreach (var change in scmMaterial.consolidatedChangelist.reviewSummaryFiles.OrderBy(p => p.path))
+                            {
+                                var link = "/FileDetail/" + reviewModel.Id + "/" + change.latestVersionId;
+
+                                bool isDeleted = false;
+                                try
+                                {
+
+                                    var reviewFile = server.ReviewService.GetReviewFile(reviewModel.Id, change.latestVersionId);
+                                    var file = server.ReviewService.GetReviewFile(reviewModel.Id, reviewFile.versions.First().id);
+
+                                    isDeleted = file.changeType.ToLower() == "deleted";
+                                }
+                                catch
+                                {
+
+                                }
+                                <tr>
+                                    <td>
+                                        @if (isDeleted)
+                                        {
+
+                                            <NavLink class="nav-link" style="text-decoration : line-through" href="@link">
+                                                @change.path
+                                            </NavLink>
+                                        }
+                                        else
+                                        {
+                                            <NavLink class="nav-link" href="@link">
+                                                @change.path
+                                            </NavLink>
+                                        }
+                                    </td>
+                                    <td>@change.linesAdded</td>
+                                    <td>@change.linesModified</td>
+                                    <td>@change.linesDeleted</td>
+                                    <td>@change.statusText</td>
+                                </tr>
+                            }
+                        }
+                    }
+
+                </tbody>
+            </table>
+        }
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="spinner"></div>
+    }
+}
+
+@code {
+
+    public class ReviewModel
+    {
+        [Required]
+        public int Id { get; set; }
+    }
+
+    private ReviewModel reviewModel = new ReviewModel();
+
+    [Parameter]
+    public int MaxHeight { get; set; } = 300;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Review.ReviewSummary summary;
+
+    private bool isLoading;
+
+    protected override Task OnInitializedAsync()
+    {
+        isLoading = true;
+        return base.OnInitializedAsync();
+    }
+
+    private Server server;
+
+    private bool isLoaded = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Id == 0)
+            {
+                Id = await sessionService.GetItemAsync<int>("ReviewId");
+            }
+
+            server = (await serverService.GetCollaboratorServer());
+
+            if (Id != 0)
+            {
+                reviewModel.Id = Id;
+                isLoading = true;
+                summary = server.ReviewService.GetReviewSummary(Id, true);
+                await sessionService.SetItemAsync("ReviewId", Id);
+
+                //if (summary.scmMaterials != null && summary.scmMaterials.Any() && summary.scmMaterials[0].consolidatedChangelist != null)
+                //{
+                //    changeList = summary.scmMaterials[0].consolidatedChangelist;
+                //}
+            }
+
+            MaxHeight = (await BrowserService.GetDimensions()).Height - 200;
+
+            isLoading = false;
+            isLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    private async void HandleValidSubmit()
+    {
+        if (server == null || !server.Connected)
+        {
+            navigationManager.NavigateTo("/");
+            return;
+        }
+
+        else
+        {
+            navigationManager.NavigateTo($"/ReviewDetail/{reviewModel.Id}", true);
+        }
+
+        //isLoading = true;
+        //summary = server.ReviewService.GetReviewSummary(reviewModel.Id, true);
+
+        //if (summary != null && summary.scmMaterials != null && summary.scmMaterials.Any() && summary.scmMaterials[0].consolidatedChangelist != null)
+        //{
+        //    changeList = summary.scmMaterials[0].consolidatedChangelist;
+
+        //    await sessionService.SetItemAsync("ReviewId", reviewModel.Id);
+        //}
+
+        //isLoading = false;
+        //StateHasChanged();
+    }
+
+    private void HandleInvalidSubmit()
+    {
+    }
+}

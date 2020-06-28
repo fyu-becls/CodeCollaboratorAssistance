@@ -1,0 +1,78 @@
+﻿@page "/"
+@namespace CodeCollaboratorAssistance.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Collaborator Assistant</title>
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="_content/BlazorTextDiff/css/BlazorDiff.css" rel="stylesheet" />
+    <link href="_content/MatBlazor/dist/matBlazor.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/DataTables/datatables.css">
+    <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css" />
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/scroller/2.0.2/css/scroller.dataTables.min.css" rel="stylesheet" />
+
+    <link href="/lib/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+</head>
+<body>
+    <app>
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
+    </app>
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="_content/BlazorTextDiff/js/BlazorTextDiff.js"></script>
+    <script src="_content/MatBlazor/dist/matBlazor.js"></script>
+    <script type="text/javascript" charset="utf8" src="/DataTables/datatables.js"></script>
+    <script type="text/javascript" src="DataTables/datatables.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables-scroller/js/dataTables.scroller.min.js"></script>
+    <script src="~/lib/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/lib/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/lib/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/lib/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="~/lib/datatables-buttons/js/buttons.flash.min.js"></script>
+    <script>
+        function TestDataTablesAdd(table) {
+            $(document).ready(function () {
+                $(table).DataTable({
+                    select: true,
+                    search: false,
+                    searching: false,
+                    paging: false,
+                    select: 'single',
+                    "aoColumns": [
+                        null,
+                        null,
+                        { "bSortable": false }
+                    ]
+                });
+            });
+        }
+
+        function ScrollTableToRow(table, row) {
+            //$(table).row(row).scrollTo();
+        }
+    </script>
+</body>
+</html>

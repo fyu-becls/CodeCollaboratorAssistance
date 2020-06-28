@@ -1,0 +1,64 @@
+﻿@using CollabAPI
+@using CodeCollaboratorAssistance.Data
+@using Blazored.SessionStorage
+@inject ServerService serverService
+@inject ISessionStorageService sessionService
+
+<h3>Ongoing Reviews</h3>
+
+@if (suggestedReviews == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Review</th>
+                <th>Progress</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (server != null)
+            {
+                foreach (var review in suggestedReviews)
+                {
+                    var link = "/ReviewDetail/" + review.reviewId;
+                    var summary = server.ReviewService.GetReviewSummary(review.reviewId, true);
+                    @if (summary != null)
+                    {
+                        <tr>
+                            <td>
+                                <NavLink class="nav-link" href="@link">
+                                    @review.displayText
+                                </NavLink>
+                            </td>
+                            <td>@summary.reviewMovingOn.phase</td>
+                            <td>@summary.reviewParticipants.FirstOrDefault(p => p.role.name.ToLower() == "author")?.displayName</td>
+                        </tr>
+                    }
+                }
+            }
+
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private bool isAuthenticated;
+    private List<User.SuggestedReview> suggestedReviews;
+    private Server server;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            server = await serverService.GetCollaboratorServer();
+            suggestedReviews = server.UserService.GetSuggestedReviews().suggestedReviews;
+            StateHasChanged();
+        }
+    }
+}

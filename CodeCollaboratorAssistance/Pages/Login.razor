@@ -1,0 +1,102 @@
+﻿@page  "/Login"
+@using CodeCollaboratorAssistance.Data
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager navigationManager
+@inject AuthenticationService authenticationService
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+    <DataAnnotationsValidator />
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div>
+        <label style="font-style:italic">Note: Use your code collaborator account and password to login.</label>
+    </div>
+    <div>
+        <label>Username</label>
+
+        <div>
+            <InputText id="name" placeholder="Username" @bind-Value="loginModel.username" />
+            <ValidationMessage For="@(() => loginModel.username)" />
+        </div>
+    </div>
+    <div style="margin:12px 12px 0px 0px">
+        <label>Password</label>
+
+        <div>
+            <InputText id="password" type="password" placeholder="Password" @bind-Value="loginModel.password" />
+            <ValidationMessage For="@(() => loginModel.password)" />
+        </div>
+    </div>
+    <div style="margin: 12px 12px 0px 0px;">
+        @if (isLogining)
+        {
+            <input type="submit" value="Log in..." class="btn btn-primary disabled"/>
+        }
+        else
+        {
+            <input type="submit" value="Log in" class="btn btn-primary btn-outline-primary "/>
+        }
+        <label class="validation-message">@loginErrorMessage</label>
+    </div>
+  
+</EditForm>
+
+@code {
+
+    public class LoginModel
+    {
+        [Required]
+        public string username { get; set; }
+        [Required]
+        public string password { get; set; }
+    }
+
+    private string loginErrorMessage;
+    private LoginModel loginModel = new LoginModel();
+
+    private bool isLogining;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async void HandleValidSubmit()
+    {
+        isLogining = true;
+        StateHasChanged();
+
+        var isAuthenticated = await authenticationService.AuthenticateAsync(loginModel.username, loginModel.password);
+
+        isLogining = false;
+
+        if (isAuthenticated)
+        {
+            navigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            loginErrorMessage = "Invalid username or password.";
+        }
+        StateHasChanged();
+    }
+    private void HandleInvalidSubmit()
+    {
+    }
+
+    protected async Task DoLogin()
+    {
+        var isAuthenticated = await authenticationService.AuthenticateAsync(loginModel.username, loginModel.password);
+
+        if (isAuthenticated)
+        {
+            navigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            loginErrorMessage = "Invalid username or password.";
+        }
+    }
+}

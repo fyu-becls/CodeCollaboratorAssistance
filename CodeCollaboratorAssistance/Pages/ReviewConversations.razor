@@ -1,0 +1,39 @@
+﻿
+@using System.ComponentModel.DataAnnotations
+@using Blazored.SessionStorage
+@using CodeCollaboratorAssistance.Data
+@using CollabAPI
+@using MatBlazor
+@inject ServerService serverService
+@inject ISessionStorageService sessionService
+@inject NavigationManager navigationManager
+@inject BrowserService BrowserService
+
+<div id="divPanel" style="width: 400px;@($"max-height: {MaxHeight}px; height: {MaxHeight}px; overflow-y: scroll; overflow-x: auto")">
+    @foreach(var conversation in ReviewFile?.conversations ?? new List<Review.Conversation>())
+    {
+        <ReviewConversation Conversation="conversation"/>
+        <div style="height: 10px"></div>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public int MaxHeight { get; set; } = 300;
+
+    [Parameter]
+    public Review.ReviewFile ReviewFile { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            MaxHeight = (await BrowserService.GetDimensions()).Height - 150;
+            StateHasChanged();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}
