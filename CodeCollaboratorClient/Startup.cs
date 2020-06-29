@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CodeCollaboratorClient.Authentication;
 
 namespace CodeCollaboratorClient
 {
@@ -50,6 +51,7 @@ namespace CodeCollaboratorClient
             ServiceCollection.AddSingleton<ICollabCommandExecutor, CollabServerConnection>();
             ServiceCollection.AddSingleton<CollabConnectionSettings>(); 
             ServiceCollection.AddSingleton<LoginViewModel>();
+            ServiceCollection.AddSingleton<IAuthenticationService, AuthenticationService>();
 
             ServiceLocatorManager.Instance.Initialize(ServiceCollection.BuildServiceProvider());
         }

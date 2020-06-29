@@ -13,6 +13,8 @@ namespace CollabCommandAPI
 
         Task<bool> Connect();
 
+        Task<bool> Connect(string username, string password);
+
         Task<bool> Disconnect();
 
         event EventHandler<string> NewOutputEvent;

@@ -6,8 +6,11 @@ using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CodeCollaboratorClient;
+using CodeCollaboratorClient.Authentication;
 
 namespace CodeCollaboratorClient.ViewModels
 {
@@ -16,23 +19,15 @@ namespace CodeCollaboratorClient.ViewModels
         private bool _isLogin;
         private readonly CollabConnectionSettings _collabConnectionSettings;
         private readonly ICollabServerConnection _serverConnection;
-        public LoginViewModel(CollabConnectionSettings settings, ICollabServerConnection serverConnection)
+        private readonly IAuthenticationService _authenticationService;
+        public LoginViewModel(CollabConnectionSettings settings, ICollabServerConnection serverConnection, IAuthenticationService authenticationService)
         {
             _collabConnectionSettings = settings;
             _serverConnection = serverConnection;
+            _authenticationService = authenticationService;
         }
 
-        public bool IsLogin
-        {
-            get => _isLogin;
-            set
-            {
-                if (Set(ref _isLogin, value))
-                {
-                    RaisePropertyChanged(nameof(IsLogout));
-                }
-            }
-        }
+        public bool IsLogin => Thread.CurrentPrincipal.Identity.IsAuthenticated;
 
         public bool IsLogout
         {
@@ -41,13 +36,13 @@ namespace CodeCollaboratorClient.ViewModels
 
         public string UserName
         {
-            get => _collabConnectionSettings.UserName;
-            set
+            get
             {
-                if (Set(ref _collabConnectionSettings.UserName, value))
-                {
-                    UserSettings.Default.UserName = _collabConnectionSettings.UserName;
-                }
+                //Get the current principal object
+                CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+                if (customPrincipal == null)
+                    throw new ArgumentException("The application's default thread principal must be set to a CustomPrincipal object on startup.");
+                return customPrincipal.Identity?.Name ?? "Anonymous";
             }
         }
         public string UserPassword
@@ -69,9 +64,18 @@ namespace CodeCollaboratorClient.ViewModels
         {
             get => new RelayCommand(() =>
             {
+                //Get the current principal object
+                CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+                if (customPrincipal == null)
+                    throw new ArgumentException("The application's default thread principal must be set to a CustomPrincipal object on startup.");
+
+                //Authenticate the user
+                customPrincipal.Identity = new AnonymousIdentity();
+
                 _collabConnectionSettings.UserName = null;
                 _collabConnectionSettings.UserPassword = null;
-                IsLogin = false;
+                RaisePropertyChanged(nameof(IsLogin));
+                RaisePropertyChanged(nameof(IsLogout));
                 RaisePropertyChanged(nameof(UserName));
             });
         }
@@ -85,15 +89,31 @@ namespace CodeCollaboratorClient.ViewModels
             }
             else
             {
-                if (! (await _serverConnection.Connect()))
+                try
                 {
-                    IsLogin = false;
-                    Messenger.Default.Send<NotificationMessage>(new NotificationMessage("Login failed."));
-                }
-                else
-                {
-                    IsLogin = true;
+                    //Validate credentials through the authentication service
+                    User user = await _authenticationService.AuthenticateUser(settings.UserName, settings.UserPassword);
+
+                    //Get the current principal object
+                    CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+                    if (customPrincipal == null)
+                        throw new ArgumentException("The application's default thread principal must be set to a CustomPrincipal object on startup.");
+
+                    //Authenticate the user
+                    customPrincipal.Identity = new CustomIdentity(user.Username, user.Roles);
                     RaisePropertyChanged(nameof(UserName));
+                    RaisePropertyChanged(nameof(IsLogin));
+                    RaisePropertyChanged(nameof(IsLogout));
+
+                    //Update UI
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    Messenger.Default.Send<NotificationMessage>(new NotificationMessage("Login failed! Please provide some valid credentials."));
+                }
+                catch (Exception ex)
+                {
+                    Messenger.Default.Send<NotificationMessage>(new NotificationMessage($"ERROR: {ex.Message}"));
                 }
             }
 

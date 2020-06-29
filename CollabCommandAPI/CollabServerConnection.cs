@@ -29,6 +29,12 @@ namespace CollabCommandAPI
             return result.ExitCode == 0;
         }
 
+        public async Task<bool> Connect(string username, string password)
+        {
+            var result = await ExecuteCommand(_authenticationCommands.Login(_collabConnectionSettings.ServerURL, username, password), 5000);
+            return result.ExitCode == 0;
+        }
+
         public async Task<bool> Disconnect()
         {
             var result = await ExecuteCommand(_authenticationCommands.Logout(_collabConnectionSettings), 5000);

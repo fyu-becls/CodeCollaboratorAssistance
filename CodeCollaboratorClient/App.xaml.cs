@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using CodeCollaboratorClient.Authentication;
 
 namespace CodeCollaboratorClient
 {
@@ -16,6 +17,14 @@ namespace CodeCollaboratorClient
         public App()
         {
             CodeCollaboratorClient.Startup.Configure();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            //Create a custom principal with an anonymous identity at startup
+            CustomPrincipal customPrincipal = new CustomPrincipal();
+            AppDomain.CurrentDomain.SetThreadPrincipal(customPrincipal);
+            base.OnStartup(e);
         }
     }
 }
