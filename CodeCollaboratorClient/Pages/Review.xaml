@@ -9,6 +9,9 @@
       Title="Review">
 
     <Grid>
-        <TextBlock>Review</TextBlock>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock>Review ID:</TextBlock>
+            <TextBlock Text="{Binding ReviewId}" Margin="4,0,0,0"></TextBlock>
+        </StackPanel>
     </Grid>
 </Page>

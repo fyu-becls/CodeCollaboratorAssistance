@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Authoring.Infrastructure.ServiceLocator;
+using CodeCollaboratorClient.ViewModels;
 
 namespace CodeCollaboratorClient.Pages
 {
@@ -21,6 +23,7 @@ namespace CodeCollaboratorClient.Pages
         public HomePage()
         {
             InitializeComponent();
+            DataContext = ServiceLocatorManager.Instance.GlobalServiceLocator.GetService<HomeViewModel>();
         }
     }
 }

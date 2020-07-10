@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CollabAPI\CollabAPI.csproj" />
     <ProjectReference Include="..\CollabCommandAPI\CollabCommandAPI.csproj" />
     <ProjectReference Include="..\ExecuteCommandLineProgram\ExecuteCommandLineProgram.csproj" />
     <ProjectReference Include="..\Infrastructure.ServiceLocator\Infrastructure.ServiceLocator.csproj" />
@@ -30,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="review_summary.xsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="UserSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>UserSettings.Designer.cs</LastGenOutput>

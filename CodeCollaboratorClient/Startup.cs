@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using CodeCollaboratorClient.Authentication;
+using CodeCollaboratorClient.CollabAPIManager;
 
 namespace CodeCollaboratorClient
 {
@@ -52,6 +53,8 @@ namespace CodeCollaboratorClient
             ServiceCollection.AddSingleton<CollabConnectionSettings>(); 
             ServiceCollection.AddSingleton<LoginViewModel>();
             ServiceCollection.AddSingleton<IAuthenticationService, AuthenticationService>();
+            ServiceCollection.AddSingleton<APIManager>();
+            ServiceCollection.AddSingleton<HomeViewModel>();
 
             ServiceLocatorManager.Instance.Initialize(ServiceCollection.BuildServiceProvider());
         }

@@ -77,7 +77,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <mah:ProgressRing IsActive="True" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"></mah:ProgressRing>
         <mah:HamburgerMenu x:Name="Hamburger" ItemTemplate="{StaticResource HamburgerMenuItem}" PaneBackground="{DynamicResource MahApps.HamburgerMenu.Pane.Background}">
             <mah:HamburgerMenu.ItemsSource>
                 <mah:HamburgerMenuItemCollection>
@@ -106,9 +105,9 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"></RowDefinition>
                         <RowDefinition Height="5"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="150"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Frame x:Name="NavigationFrame" NavigationUIVisibility="Hidden"></Frame>
+                    <Frame x:Name="NavigationFrame" NavigationUIVisibility="Hidden" Margin="12"></Frame>
                     <GridSplitter Grid.Row="1"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Center"
@@ -141,7 +140,7 @@
                         <Border Grid.Row="0"
                                     Margin="-1 0 -1 0"
                                     Background="#7A7A7A">
-                            <TextBlock x:Name="Header"
+                            <TextBlock x:Name="Header" Margin="12"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Center"
                                            FontSize="24"
@@ -167,5 +166,7 @@
                 </DataTemplate>
             </mah:HamburgerMenu.ContentTemplate>
         </mah:HamburgerMenu>
+
+        <mah:ProgressRing IsActive="True" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"></mah:ProgressRing>
     </Grid>
 </mah:MetroWindow>

@@ -83,6 +83,7 @@ namespace CodeCollaboratorClient.ViewModels
         public async Task<bool> LoginWithParameter(CollabConnectionSettings settings)
         {
             CurrentMainWindow.Instance.IsBusy = true;
+            await Task.Delay(200);
             if (string.IsNullOrWhiteSpace(settings.UserName) || string.IsNullOrWhiteSpace(settings.UserPassword))
             {
                 Messenger.Default.Send<NotificationMessage>(new NotificationMessage("Username/password is required."));
@@ -110,10 +111,13 @@ namespace CodeCollaboratorClient.ViewModels
                 catch (UnauthorizedAccessException)
                 {
                     Messenger.Default.Send<NotificationMessage>(new NotificationMessage("Login failed! Please provide some valid credentials."));
+
+                    return await Task.FromResult(false);
                 }
                 catch (Exception ex)
                 {
                     Messenger.Default.Send<NotificationMessage>(new NotificationMessage($"ERROR: {ex.Message}"));
+                    return await Task.FromResult(false);
                 }
             }
 
