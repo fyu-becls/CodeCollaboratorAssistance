@@ -55,6 +55,8 @@ namespace CodeCollaboratorClient
             ServiceCollection.AddSingleton<IAuthenticationService, AuthenticationService>();
             ServiceCollection.AddSingleton<APIManager>();
             ServiceCollection.AddSingleton<HomeViewModel>();
+            ServiceCollection.AddSingleton<GlobalParameters>();
+            ServiceCollection.AddTransient<ReviewViewModel>();
 
             ServiceLocatorManager.Instance.Initialize(ServiceCollection.BuildServiceProvider());
         }

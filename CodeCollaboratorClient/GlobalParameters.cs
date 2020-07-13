@@ -1,7 +1,10 @@
-﻿namespace CodeCollaboratorClient
+﻿using CollabAPI;
+
+namespace CodeCollaboratorClient
 {
-    public static class GlobalParameters
+    public class GlobalParameters
     {
-        public static string ReviewId { get; set; }
+        public string ReviewId { get; set; }
+        public Server Server { get; set; }
     }
 }

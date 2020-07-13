@@ -110,12 +110,14 @@ namespace CodeCollaboratorClient.ViewModels
                 }
                 catch (UnauthorizedAccessException)
                 {
+                    CurrentMainWindow.Instance.IsBusy = false;
                     Messenger.Default.Send<NotificationMessage>(new NotificationMessage("Login failed! Please provide some valid credentials."));
 
                     return await Task.FromResult(false);
                 }
                 catch (Exception ex)
                 {
+                    CurrentMainWindow.Instance.IsBusy = false;
                     Messenger.Default.Send<NotificationMessage>(new NotificationMessage($"ERROR: {ex.Message}"));
                     return await Task.FromResult(false);
                 }

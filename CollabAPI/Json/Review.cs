@@ -713,16 +713,16 @@ namespace CollabAPI
 
         public class ReviewMovingOn
         {
-            public string authorRoleName;
-            public string explanaition;
-            public Review.ReviewPhase phase;
-            public Review.ReviewSummary reviewSummary;
-            public string signatureStatus;
-            public string whyNotAllowedToAnnotate;
-            public SortedDictionary<string, string> whyNotAllowedToFinish;
-            public SortedDictionary<string, string> whyNotAllowedToWait;
-            public bool authorRole;
-            public bool needsSignatures;
+            public string authorRoleName { get; set; }
+            public string explanaition { get; set; }
+            public Review.ReviewPhase phase { get; set; }
+            public Review.ReviewSummary reviewSummary { get; set; }
+            public string signatureStatus { get; set; }
+            public string whyNotAllowedToAnnotate { get; set; }
+            public SortedDictionary<string, string> whyNotAllowedToFinish { get; set; }
+            public SortedDictionary<string, string> whyNotAllowedToWait { get; set; }
+            public bool authorRole { get; set; }
+            public bool needsSignatures { get; set; }
         }
 
         public class ReviewParticipant

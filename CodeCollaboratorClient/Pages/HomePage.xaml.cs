@@ -25,5 +25,10 @@ namespace CodeCollaboratorClient.Pages
             InitializeComponent();
             DataContext = ServiceLocatorManager.Instance.GlobalServiceLocator.GetService<HomeViewModel>();
         }
+
+        private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+        {
+            CurrentMainWindow.Instance.NavigateTo(new Uri("Pages/Review.xaml", UriKind.Relative));
+        }
     }
 }

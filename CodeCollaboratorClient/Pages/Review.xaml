@@ -5,13 +5,121 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CodeCollaboratorClient.Pages"
       mc:Ignorable="d" 
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:converters="clr-namespace:CodeCollaboratorClient.Converters"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Review">
 
-    <Grid>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock>Review ID:</TextBlock>
-            <TextBlock Text="{Binding ReviewId}" Margin="4,0,0,0"></TextBlock>
-        </StackPanel>
+    <Page.Resources>
+        <converters:NullToBoolConverter x:Key="NullToBoolConverter"></converters:NullToBoolConverter>
+        <converters:ObjectToStringConverter x:Key="ObjectToStringConverter"></converters:ObjectToStringConverter>
+    </Page.Resources>
+
+    <Grid VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontSize" Value="16"></Setter>
+                <Setter Property="FontFamily" Value="Arial"></Setter>
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="KeyTextBlockStyle">
+                <Setter Property="FontSize" Value="16"></Setter>
+                <Setter Property="FontFamily" Value="Arial"></Setter>
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            </Style>
+            <Style TargetType="Expander">
+                <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"></Setter>
+                <Setter Property="HeaderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" FontSize="18" FontWeight="SemiBold"></TextBlock>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,0,8,0">Review ID:</TextBlock>
+                <TextBox x:Name="SearchedTextBox" Text="{Binding SearchedReviewId}" Margin="0,0,8,0" Width="200">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Return"
+                                    Command="{Binding SearchCommand}" CommandParameter="{Binding ElementName=SearchedTextBox, Path=Text}"></KeyBinding>
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Command="{Binding SearchCommand}" CommandParameter="{Binding ElementName=SearchedTextBox, Path=Text}">Search</Button>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Vertical" Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Expander Header="{Binding Title}" IsExpanded="True">
+                    <StackPanel Orientation="Vertical">
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Style="{StaticResource KeyTextBlockStyle}" Foreground="DeepSkyBlue" Text="{Binding ReviewSummary.reviewMovingOn.phase, Converter={StaticResource ObjectToStringConverter}}"></TextBlock>
+                            <ToggleButton x:Name="EditToggleButton" Grid.Column="2" HorizontalAlignment="Right"
+                                      IsEnabled="{Binding ReviewSummary.generalInfo.whyNotAllowedToModify, Converter={StaticResource NullToBoolConverter}}"
+                                      Padding="4,2,4,2">
+                                <ToggleButton.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <Trigger Property="ToggleButton.IsChecked" Value="True">
+                                                <Setter Property="ToggleButton.Content" Value="DONE EDITING"></Setter>
+                                            </Trigger>
+                                            <Trigger Property="ToggleButton.IsChecked" Value="False">
+                                                <Setter Property="ToggleButton.Content" Value="EDIT"></Setter>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                        </Grid>
+                        <Grid HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=EditToggleButton, Path=IsChecked}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="16"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="16"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="16"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="16"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="8"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource KeyTextBlockStyle}">Review Title:</TextBlock>
+                            <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.title, Mode=TwoWay}"></TextBox>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Created:</TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.creationDate, Mode=OneWay}"></TextBlock>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Review Template:</TextBlock>
+                            <ComboBox Grid.Row="4" Grid.Column="2" ItemsSource="{Binding ReviewTemplates}" DisplayMemberPath="name" SelectedItem="{Binding SelectedReviewTemplate, Mode=TwoWay}"></ComboBox>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Deadline:</TextBlock>
+                            <DatePicker Grid.Row="6" Grid.Column="2" SelectedDate="{Binding ReviewInfo.deadline, Mode=OneWay}"></DatePicker>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Completed On:</TextBlock>
+                            <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.completionDate, Mode=OneWay}"></TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

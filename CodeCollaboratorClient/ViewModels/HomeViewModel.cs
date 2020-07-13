@@ -24,6 +24,7 @@ namespace CodeCollaboratorClient.ViewModels
         private readonly ICollabCommandExecutor _commandExecutor;
         private readonly LoginViewModel _loginViewModel;
         private List<User.UserInfo> _userList;
+        private GlobalParameters _globalParameters;
 
         public LoginViewModel LoginViewModel
         {
@@ -40,8 +41,8 @@ namespace CodeCollaboratorClient.ViewModels
         public async Task Initialize()
         {
             CurrentMainWindow.Instance.IsBusy = true;
-            await Task.Delay(1000);
-            _server = await _apiManager.GetCollaboratorServer("fyu", "Beckman@123");
+            await Task.Delay(100);
+            _server = _globalParameters.Server = await _apiManager.GetCollaboratorServer("fyu", "Beckman@123");
             IsServerConnected = _server?.Connected ?? false;
             _userList = _server?.UserService.GetUserList();
 
@@ -73,9 +74,10 @@ namespace CodeCollaboratorClient.ViewModels
             }
         }
 
-        public HomeViewModel(LoginViewModel loginViewModel, APIManager apiManager, ICollabCommandExecutor commandExecutor, ReviewCommands reviewCommands)
+        public HomeViewModel(LoginViewModel loginViewModel, APIManager apiManager, ICollabCommandExecutor commandExecutor, ReviewCommands reviewCommands, GlobalParameters globalParameters)
         {
             _loginViewModel = loginViewModel;
+            _globalParameters = globalParameters;
             _loginViewModel.PropertyChanged += async (sender, args) =>
             {
                 if (args.PropertyName == nameof(LoginViewModel.IsLogin))
@@ -125,7 +127,7 @@ namespace CodeCollaboratorClient.ViewModels
             RefreshCommand = new RelayCommand(async () => await RefreshReviews(), ()=> !IsLoading);
             OpenReviewCommand = new RelayCommand<string>((id) =>
             {
-                GlobalParameters.ReviewId = id;
+                _globalParameters.ReviewId = id;
                 CurrentMainWindow.Instance.NavigateTo(new Uri("Pages/Review.xaml", UriKind.Relative));
             });
 

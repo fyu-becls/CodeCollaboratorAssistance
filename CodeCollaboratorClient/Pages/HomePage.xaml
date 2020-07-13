@@ -59,8 +59,15 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding RefreshCommand}">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Foreground="White" Background="LightGray"><Span FontWeight="SemiBold">NOTE:</Span>
+                        <Run>1.This page only list the reviews that you created.</Run>
+                        <LineBreak></LineBreak>
+                        <Span>2. Goto <Hyperlink Click="Hyperlink_OnClick">Review</Hyperlink> page, you can search the reviews that you have access to.</Span>
+                    </TextBlock>
+                </StackPanel>
+                <Button Command="{Binding RefreshCommand}" HorizontalAlignment="Left">
                     <iconPacks:PackIconMaterial Kind="Refresh"></iconPacks:PackIconMaterial>
                 </Button>
             </StackPanel>
