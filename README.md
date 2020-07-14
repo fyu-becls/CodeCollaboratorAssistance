@@ -1,4 +1,3 @@
-
 ## Overview
 Collaborator provides two approaches to interact with the server by API.
 
