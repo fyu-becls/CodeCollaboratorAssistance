@@ -5,6 +5,8 @@ Collaborator provides two approaches to interact with the server by API.
      This approach does not consume a license. It provides most of commands to edit a review, add comments or defects, change the review stage and etc. But it is lack of retrieving the detailed review information.
  2. Json Web API
      This approach consumes a license. Compare to the Command-line client, it has ability to retrieve the detailed review information.
+     
+![Architect Diagram](Doc/Architect%20Diagram.png)
 
 ## Appendix ##
 ### Collaborator floating-seat licenses
