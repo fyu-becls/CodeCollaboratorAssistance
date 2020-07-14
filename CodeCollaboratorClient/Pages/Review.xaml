@@ -13,23 +13,131 @@
     <Page.Resources>
         <converters:NullToBoolConverter x:Key="NullToBoolConverter"></converters:NullToBoolConverter>
         <converters:ObjectToStringConverter x:Key="ObjectToStringConverter"></converters:ObjectToStringConverter>
+        <Style TargetType="{x:Type ListViewItem}">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#00000000"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#00000000"/>
+            </Style.Resources>
+        </Style>
+
+        <DataTemplate x:Key="CustomFieldTemplateSelection">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="8"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding title}" VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground"
+                                            Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+                <ComboBox x:Name="ComboBoxItem" Grid.Column="2" ItemsSource="{Binding items}" SelectedItem="{Binding selectedItem}">
+                </ComboBox>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CustomFieldTemplateString">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="8"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding title}" VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground"
+                                            Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBox Grid.Column="2" Text="{Binding selectedItem}"></TextBox>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CustomFieldTemplateStringBig">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="8"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding title}" VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground"
+                                            Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+                <TextBox Grid.Column="2" Text="{Binding selectedItem}" MinHeight="100"></TextBox>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CustomFieldTemplateUnsupported">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="8"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding title}">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground"
+                                            Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+                <TextBlock Grid.Column="2" Text="{Binding selectedItem}">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground"
+                                            Value="{StaticResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+            </Grid>
+        </DataTemplate>
+
+        <local:CustomFieldTemplateSelector x:Key="CustomFieldTemplateSelector"
+                                           SelectionTemplate="{StaticResource CustomFieldTemplateSelection}"
+                                           StringTemplate="{StaticResource CustomFieldTemplateString}"
+                                           StringBigTemplate="{StaticResource CustomFieldTemplateStringBig}"
+                                           UnSupportedTemplate="{StaticResource CustomFieldTemplateUnsupported}">
+        </local:CustomFieldTemplateSelector>
     </Page.Resources>
 
-    <Grid VerticalAlignment="Top">
+    <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.Resources>
 
             <Style TargetType="TextBlock">
-                <Setter Property="FontSize" Value="16"></Setter>
-                <Setter Property="FontFamily" Value="Arial"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
             </Style>
             <Style TargetType="TextBlock" x:Key="KeyTextBlockStyle">
-                <Setter Property="FontSize" Value="16"></Setter>
-                <Setter Property="FontFamily" Value="Arial"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
             </Style>
             <Style TargetType="Expander">
@@ -46,9 +154,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="0,0,8,0">Review ID:</TextBlock>
@@ -60,66 +166,89 @@
                 </TextBox>
                 <Button Command="{Binding SearchCommand}" CommandParameter="{Binding ElementName=SearchedTextBox, Path=Text}">Search</Button>
             </StackPanel>
-            <StackPanel Grid.Row="1" Orientation="Vertical" Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Expander Header="{Binding Title}" IsExpanded="True">
-                    <StackPanel Orientation="Vertical">
-                        <Grid Margin="0,0,0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="1" Style="{StaticResource KeyTextBlockStyle}" Foreground="DeepSkyBlue" Text="{Binding ReviewSummary.reviewMovingOn.phase, Converter={StaticResource ObjectToStringConverter}}"></TextBlock>
-                            <ToggleButton x:Name="EditToggleButton" Grid.Column="2" HorizontalAlignment="Right"
+            <ScrollViewer Grid.Row="1">
+                <StackPanel Orientation="Vertical" Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Expander Header="{Binding Title}" IsExpanded="True">
+                        <StackPanel Orientation="Vertical">
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Style="{StaticResource KeyTextBlockStyle}" Foreground="DeepSkyBlue" Text="{Binding ReviewSummary.reviewMovingOn.phase, Converter={StaticResource ObjectToStringConverter}}"></TextBlock>
+                                <ToggleButton x:Name="EditToggleButton" Grid.Column="2" HorizontalAlignment="Right"
                                       IsEnabled="{Binding ReviewSummary.generalInfo.whyNotAllowedToModify, Converter={StaticResource NullToBoolConverter}}"
                                       Padding="4,2,4,2">
-                                <ToggleButton.Style>
-                                    <Style>
-                                        <Style.Triggers>
-                                            <Trigger Property="ToggleButton.IsChecked" Value="True">
-                                                <Setter Property="ToggleButton.Content" Value="DONE EDITING"></Setter>
-                                            </Trigger>
-                                            <Trigger Property="ToggleButton.IsChecked" Value="False">
-                                                <Setter Property="ToggleButton.Content" Value="EDIT"></Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ToggleButton.Style>
-                            </ToggleButton>
-                        </Grid>
-                        <Grid HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=EditToggleButton, Path=IsChecked}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition Height="16"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition Height="16"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition Height="16"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition Height="16"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition Width="8"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Style="{StaticResource KeyTextBlockStyle}">Review Title:</TextBlock>
-                            <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.title, Mode=TwoWay}"></TextBox>
-                            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Created:</TextBlock>
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.creationDate, Mode=OneWay}"></TextBlock>
-                            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Review Template:</TextBlock>
-                            <ComboBox Grid.Row="4" Grid.Column="2" ItemsSource="{Binding ReviewTemplates}" DisplayMemberPath="name" SelectedItem="{Binding SelectedReviewTemplate, Mode=TwoWay}"></ComboBox>
+                                    <ToggleButton.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                                                    <Setter Property="ToggleButton.Content" Value="DONE EDITING"></Setter>
+                                                </Trigger>
+                                                <Trigger Property="ToggleButton.IsChecked" Value="False">
+                                                    <Setter Property="ToggleButton.Content" Value="EDIT"></Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                            </Grid>
+                            <Grid HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=EditToggleButton, Path=IsChecked}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="16"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="8"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource KeyTextBlockStyle}">Review Title:</TextBlock>
+                                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.title, Mode=TwoWay}"></TextBox>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Created:</TextBlock>
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.creationDate, Mode=OneWay}"></TextBlock>
+                                <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Review Template:</TextBlock>
+                                <ComboBox Grid.Row="4" Grid.Column="2" ItemsSource="{Binding ReviewTemplates}" DisplayMemberPath="name" SelectedItem="{Binding SelectedReviewTemplate, Mode=TwoWay}"></ComboBox>
 
-                            <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Deadline:</TextBlock>
-                            <DatePicker Grid.Row="6" Grid.Column="2" SelectedDate="{Binding ReviewInfo.deadline, Mode=OneWay}"></DatePicker>
+                                <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Deadline:</TextBlock>
+                                <DatePicker Grid.Row="6" Grid.Column="2" SelectedDate="{Binding ReviewInfo.deadline, Mode=OneWay}"></DatePicker>
 
-                            <TextBlock Grid.Row="8" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Completed On:</TextBlock>
-                            <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.completionDate, Mode=OneWay}"></TextBlock>
-                        </Grid>
-                    </StackPanel>
-                </Expander>
-            </StackPanel>
+                                <TextBlock Grid.Row="8" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Completed On:</TextBlock>
+                                <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding ReviewSummary.generalInfo.completionDate, Mode=OneWay}"></TextBlock>
+
+                                <TextBlock Grid.Row="10" Grid.Column="0" Style="{StaticResource KeyTextBlockStyle}">Restrict Access:</TextBlock>
+                                <ComboBox Grid.Row="10" Grid.Column="2" ItemsSource="{Binding RestrictAccessList}" SelectedItem="{Binding SelectedRestrictAccess, Mode=TwoWay}"></ComboBox>
+
+                                <ListView Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="3"
+                                          HorizontalAlignment="Stretch" ItemsSource="{Binding SelectedReviewTemplate.reviewCustomFields}" ItemTemplateSelector="{StaticResource CustomFieldTemplateSelector}">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="Margin" Value="0,4,0,4"></Setter>
+                                            <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                            <Setter Property="Padding" Value="0"></Setter>
+                                            <Setter Property="Focusable" Value="False"></Setter>
+                                        </Style>
+                                        
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Grid>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

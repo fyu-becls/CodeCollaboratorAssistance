@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace CollabAPI
 {
@@ -67,6 +68,9 @@ namespace CollabAPI
             public bool isRequired { get; set; }
 
             public SystemAdmin.CustomFieldModifyRole customFieldModifyRole { get; set; }
+
+            [JsonIgnore]
+            public string selectedItem { get; set; }
         }
 
         public class CustomFieldSettingsTarget

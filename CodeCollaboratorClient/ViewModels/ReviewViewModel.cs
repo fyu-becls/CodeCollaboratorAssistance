@@ -25,12 +25,7 @@ namespace CodeCollaboratorClient.ViewModels
             {
                 try
                 {
-                    ReviewSummary = _globalParameters.Server.ReviewService.GetReviewSummary(int.Parse(ReviewId), true);
-                    IsLoaded = ReviewSummary != null;
-                    ReviewInfo = _globalParameters.Server.ReviewService.GetReviewInfo(int.Parse(ReviewId));
-                    ReviewTemplates = _globalParameters.Server.ReviewService.GetAvailableTemplates();
-                    SelectedReviewTemplate = ReviewTemplates.FirstOrDefault((r) => r.name == ReviewSummary.generalInfo.reviewTemplate.name);
-
+                    Reload(int.Parse(ReviewId));
                 }
                 catch (Exception e)
                 {
@@ -54,6 +49,10 @@ namespace CodeCollaboratorClient.ViewModels
 
         public Review.ReviewTemplate SelectedReviewTemplate { get; set; }
 
+        public List<string> RestrictAccessList { get; set; }
+
+        public string SelectedRestrictAccess { get; set; }
+
         public ICommand ChangeHeadlineCommand
         {
             get => new RelayCommand(() =>
@@ -70,23 +69,8 @@ namespace CodeCollaboratorClient.ViewModels
                 {
                     CurrentMainWindow.Instance.IsBusy = true;
                     await Task.Delay(200);
-                    ReviewSummary = _globalParameters.Server.ReviewService.GetReviewSummary(int.Parse(reviewId), true);
-                    IsLoaded = ReviewSummary != null;
-                    ReviewInfo = _globalParameters.Server.ReviewService.GetReviewInfo(int.Parse(reviewId));
-                    ReviewTemplates = _globalParameters.Server.ReviewService.GetAvailableTemplates();
-                    SelectedReviewTemplate =
-                        ReviewTemplates.FirstOrDefault((r) => r.name == ReviewSummary.generalInfo.reviewTemplate.name);
-                    //RaisePropertyChanged(nameof(ReviewSummary));
-                    //RaisePropertyChanged(nameof(ReviewInfo));
-                    //RaisePropertyChanged(nameof(ReviewTemplates));
-                    //RaisePropertyChanged(nameof(SelectedReviewTemplate));
-                    //RaisePropertyChanged(nameof(Title));
-                    if (IsLoaded)
-                    {
-                        GlobalParameters.ReviewId = reviewId;
-                    }
-
-                    Messenger.Default.Send<RefreshReviewPageMessage>(new RefreshReviewPageMessage());
+                    Reload(int.Parse(reviewId));
+                    SearchedReviewId = reviewId;
                 }
                 catch (Exception e)
                 {
@@ -94,10 +78,39 @@ namespace CodeCollaboratorClient.ViewModels
                 }
                 finally
                 {
-
+                    Messenger.Default.Send<RefreshReviewPageMessage>(new RefreshReviewPageMessage());
                     CurrentMainWindow.Instance.IsBusy = false;
                 }
             });
+        }
+
+        private void Reload(int reviewId)
+        {
+            try
+            {
+                ReviewSummary = _globalParameters.Server.ReviewService.GetReviewSummary(reviewId, true);
+                IsLoaded = ReviewSummary != null;
+                ReviewInfo = _globalParameters.Server.ReviewService.GetReviewInfo(reviewId);
+                ReviewTemplates = _globalParameters.Server.ReviewService.GetAvailableTemplates();
+                SelectedReviewTemplate = ReviewTemplates.FirstOrDefault((r) => r.name == ReviewSummary.generalInfo.reviewTemplate.name);
+                RestrictAccessList = ApiUtils.GetAccessPolicyDisplayList("Anyone,Participants");
+                SelectedRestrictAccess = ApiUtils.GetAccessPolicyFriendlyName(ReviewInfo.accessPolicy);
+
+                foreach (var field in SelectedReviewTemplate.reviewCustomFields)
+                {
+                    field.selectedItem = ReviewSummary.generalInfo.customFieldValue.FirstOrDefault(v => v.customFieldTitle == field.title)?.customFieldValue.FirstOrDefault();
+                }
+
+                if (IsLoaded)
+                {
+                    GlobalParameters.ReviewId = reviewId.ToString();
+                }
+
+            }
+            catch (Exception e)
+            {
+                IsLoaded = false;
+            }
         }
 
         public string ReviewId
