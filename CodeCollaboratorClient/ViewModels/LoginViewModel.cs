@@ -27,7 +27,8 @@ namespace CodeCollaboratorClient.ViewModels
             _authenticationService = authenticationService;
         }
 
-        public bool IsLogin => Thread.CurrentPrincipal.Identity.IsAuthenticated;
+        //public bool IsLogin => Thread.CurrentPrincipal?.Identity?.IsAuthenticated ?? false;
+        public bool IsLogin => _authenticationService.CurrentPrincipal?.Identity?.IsAuthenticated ?? false;
 
         public bool IsLogout
         {
@@ -39,7 +40,8 @@ namespace CodeCollaboratorClient.ViewModels
             get
             {
                 //Get the current principal object
-                CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+                //CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+                CustomPrincipal customPrincipal = _authenticationService.CurrentPrincipal as CustomPrincipal;
                 if (customPrincipal == null)
                     throw new ArgumentException("The application's default thread principal must be set to a CustomPrincipal object on startup.");
                 return customPrincipal.Identity?.Name ?? "Anonymous";
@@ -65,7 +67,7 @@ namespace CodeCollaboratorClient.ViewModels
             get => new RelayCommand(() =>
             {
                 //Get the current principal object
-                CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+                CustomPrincipal customPrincipal = _authenticationService.CurrentPrincipal as CustomPrincipal;
                 if (customPrincipal == null)
                     throw new ArgumentException("The application's default thread principal must be set to a CustomPrincipal object on startup.");
 
@@ -96,7 +98,7 @@ namespace CodeCollaboratorClient.ViewModels
                     User user = await _authenticationService.AuthenticateUser(settings.UserName, settings.UserPassword);
 
                     //Get the current principal object
-                    CustomPrincipal customPrincipal = Thread.CurrentPrincipal as CustomPrincipal;
+                    CustomPrincipal customPrincipal = _authenticationService.CurrentPrincipal as CustomPrincipal;
                     if (customPrincipal == null)
                         throw new ArgumentException("The application's default thread principal must be set to a CustomPrincipal object on startup.");
 

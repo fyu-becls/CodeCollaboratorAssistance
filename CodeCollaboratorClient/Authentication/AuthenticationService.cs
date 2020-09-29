@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using CollabCommandAPI;
@@ -9,6 +10,7 @@ namespace CodeCollaboratorClient.Authentication
 {
     public class AuthenticationService : IAuthenticationService
     {
+        public IPrincipal CurrentPrincipal { get; set; }
         private class InternalUserData
         {
             public InternalUserData(string username, string hashedPassword, string[] roles)

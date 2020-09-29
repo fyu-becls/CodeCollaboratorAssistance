@@ -674,8 +674,26 @@ namespace CollabAPI
             public Review.ReviewPhase reviewPhase { get; set; }
         }
 
+        public class ReviewsFindResponse
+        {
+            public List<ReviewInfo> reviews { get; set; }
+        }
+
         public class ReviewFindByIdRequest : Review.HasReviewId
         {
+        }
+
+        public class ReviewsFindByCustomFieldValueRequest
+        {
+            public string customFieldName { get; set; }
+            public string searchText { get; set; }
+        }
+
+        public class ReviewsFindByTextRequest
+        {
+            public string customFieldName { get; set; }
+            public string searchText { get; set; }
+            public int findPlace { get; set; }
         }
 
         public class ReviewFile : Review.ConversationProvider

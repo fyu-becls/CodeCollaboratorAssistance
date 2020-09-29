@@ -108,6 +108,16 @@ namespace CollabAPI
         {
         }
 
+        public class findReviewsByCustomFieldValue : Review.ReviewsFindByCustomFieldValueRequest
+        {
+
+        }
+
+        public class findReviews : Review.ReviewsFindByTextRequest
+        {
+
+        }
+
         public class finishReviewPhase : Review.ReviewPhaseRequest
         {
         }

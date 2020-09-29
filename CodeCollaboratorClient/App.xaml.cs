@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Authoring.Infrastructure.ServiceLocator;
 using CodeCollaboratorClient.Authentication;
 
 namespace CodeCollaboratorClient
@@ -24,6 +25,8 @@ namespace CodeCollaboratorClient
             //Create a custom principal with an anonymous identity at startup
             CustomPrincipal customPrincipal = new CustomPrincipal();
             AppDomain.CurrentDomain.SetThreadPrincipal(customPrincipal);
+            ServiceLocatorManager.Instance.GlobalServiceLocator.GetService<IAuthenticationService>().CurrentPrincipal =
+                customPrincipal;
             base.OnStartup(e);
         }
     }

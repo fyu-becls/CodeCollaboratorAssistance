@@ -95,6 +95,8 @@ namespace CollabAPI
         Review.ReviewFile GetReviewFile(int reviewId, int fileVersionId);
 
         Review.ReviewInfo GetReviewInfo(int reviewId);
+        Review.ReviewsFindResponse GetReviewsByCustomField(string field, string text);
+        Review.ReviewsFindResponse GetReviews(string field, string text, int findPlace);
 
         Review.ReviewSummary GetReviewSummary(int reviewId, bool active);
 
