@@ -400,7 +400,7 @@ namespace Fcs.Core
                     {
                         throw new Exception("Read data segment failed,stream length is not enough");
                     }
-                    item.AddOneValue(bytes, byteOrd);
+                    item.AddValue(bytes, byteOrd);
                 }
             }
         }
@@ -928,7 +928,9 @@ namespace Fcs.Core
                 crc = CrcCalculator.ComputeCrc(analysisStream, crc);
                 analysisStream.Dispose();
             }
-            stream.Write(BitConverter.GetBytes(crc), 0, 2);
+
+            var stringCrc = crc.ToString().PadLeft(8, '0');
+            stream.Write(Encoding.ASCII.GetBytes(stringCrc), 0, 8);
         }
     }
 }
