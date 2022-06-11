@@ -1,14 +1,13 @@
-on: 
-  pull_request:
-    types: [opened]
+on: pull_request
 
 jobs:
-  create_comment:
+  pr-thankyou-action:
     runs-on: ubuntu-latest
-    name: Create a comment
+    name: 'Pull Request Thank You'
     steps:
-      - name: Comment current pull request
-        uses: alawiii521/current-pr-comment@v1.0
-        with:
-          comment: "Hello world!"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: 'Pull Request Thank You'
+      uses: GuySWatson/pr-thankyou-action@v1.2
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
