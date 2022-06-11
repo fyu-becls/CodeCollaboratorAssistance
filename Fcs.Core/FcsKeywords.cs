@@ -68,6 +68,5 @@
 
 
         public const string UnicodeKey = "$UNICODE";//编码类型
-
     }
 }
