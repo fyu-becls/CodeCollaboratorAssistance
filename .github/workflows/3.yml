@@ -16,7 +16,7 @@ jobs:
           && github.event.comment.body == '/hi' && github.actor == 'allthatjazzleo' )
         with:
           message: '- [ ] Did you do Personal Review, and resolved most defects?'
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Test Functionality Check
         uses: allthatjazzleo/actions-pull-request-add-comment@master
         if: >-
