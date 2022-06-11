@@ -1,10 +1,12 @@
-name: Example
-on: pull_request
+name: TI Entry Check
+on:
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
-  example_comment_pr:
+  add_comment_pr:
     runs-on: ubuntu-latest
-    name: An example job to comment a PR
+    name: TI Entry Check
     steps:
       - name: Checkout
         uses: actions/checkout@v1
