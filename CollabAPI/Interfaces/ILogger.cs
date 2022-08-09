@@ -22,4 +22,40 @@ namespace CollabAPI
 
         void ShowError(string error);
     }
+
+    public class Logger : ILogger
+    {
+        public bool IsShowErrorMessage { get; set; }
+
+        public Logger(Type t)
+        { }
+
+        public void LogDebugMessage(string message)
+        {
+        }
+
+        public void LogDebugMessage(string message, Exception exception)
+        {
+        }
+
+        public void LogError(string message)
+        {
+        }
+
+        public void LogException(Exception exception)
+        {
+        }
+
+        public void LogInfoMessage(string message)
+        {
+        }
+
+        public void LogWarningMessage(string message)
+        {
+        }
+
+        public void ShowError(string error)
+        {
+        }
+    }
 }
